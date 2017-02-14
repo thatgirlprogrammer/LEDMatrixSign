@@ -28,8 +28,9 @@ plug in ethernet cable
 sudo apt-get update
 sudo apt-get upgrade - takes a while
 ```
-config wifi
+###Config wifi
 	sometimes the GUI just works, but if not:
+```
 	pi@raspberrypi:~ $ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf 
 		ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 		update_config=1
@@ -43,7 +44,7 @@ config wifi
 
 	sudo service networking restart
 	sudo ifup wlan0
-
+```
 You should now have a nice working pi.
 
 #Install the RGB matrix library
