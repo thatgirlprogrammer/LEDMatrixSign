@@ -20,7 +20,12 @@ maxHeight = 32
 class displayElement:
     element = None
     delay = 0
-    
+
+class Animation:
+    frames = []
+    delay  = 0.0
+
+
 class signScrolling(SampleBase):
     dispElemList = []
         
@@ -35,20 +40,24 @@ class signScrolling(SampleBase):
             self.readFile()
             double_buffer = self.matrix.CreateFrameCanvas()
  
+            print 'start the sign display'
             # let's scroll
             xpos = 0
             while True:
                 for de in self.dispElemList:
-                    print type(de)
-                    if type(de.element) is str:
+                    print type(de.element)
+                    if isinstance(de.element, str):
                         self.ScrollText(de.element, de.delay, double_buffer)
-                    else:
+                    elif isinstance(de.element, Image.Image):
                         self.ScrollImage(de.element, de.delay, double_buffer)
+                    elif isinstance(de.element, Animation):
+                        self.DisplayAnimation(de.element, double_buffer)
 
     def ScrollImage(self, img, delay, canvas):
         for n in range(canvas.width, -img.size[0], -1):
             canvas.Clear()
-            canvas.SetImage(img, n, 1)
+            #print 'SetImage: ', n, 0
+            canvas.SetImage(img, n, 0)
             canvas = self.matrix.SwapOnVSync(canvas)
             if n == 0:
                 time.sleep(float(delay))
@@ -75,6 +84,48 @@ class signScrolling(SampleBase):
                 time.sleep(0.025)
                 
         
+    def readAnimation(self, filename):
+        print 'readAnimation: ', filename
+            
+        animation = Animation()
+        
+        im = Image.open(filename)
+        im.load()
+        try:
+            while 1:
+                print 'read frame'
+                a = im.copy().convert('RGB')
+                a = Scale(a)
+                animation.frames.append(a)
+                im.seek(len(animation.frames)) # skip to next frame
+        
+        except EOFError:
+            pass # we're done
+            
+        try:
+            print 'read duration'
+            animation.delay = im.info['duration']
+            print 'read duration from gif'
+            print animation.delay
+        except KeyError:
+            animation.delay = 100
+            print 'defaulting duration'
+            print 'delay: ', animation.delay
+
+        return animation
+    
+    def DisplayAnimation(self, anim, canvas):
+        print len(anim.frames)
+        while True:
+            for n in range(len(anim.frames)):
+                print 'display frame: ', n
+                canvas.Clear()
+                canvas.SetImage(anim.frames[n], 0, 0)
+                canvas = self.matrix.SwapOnVSync(canvas)
+                s = 0.1 #float(anim.delay/1000)
+                print 'sleep: ', s
+                time.sleep(s)
+
 
     def readFile(self):
         f = open(self.file, "r")
@@ -94,7 +145,12 @@ class signScrolling(SampleBase):
             elif v[0] == "text":
                 de.element = value
                 self.dispElemList.append(de)
-
+            
+            elif v[0] == "anim":
+                a =self. readAnimation(value)
+                de.element = a
+                self.dispElemList.append(de)
+    
         f.close()
             
         
