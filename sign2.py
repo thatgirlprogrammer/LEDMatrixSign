@@ -39,13 +39,12 @@ class signScrolling(SampleBase):
             print 'run'
             self.readFile()
             double_buffer = self.matrix.CreateFrameCanvas()
- 
-            print 'start the sign display'
-            # let's scroll
             xpos = 0
+            
+            # main loop
             while True:
                 for de in self.dispElemList:
-                    print type(de.element)
+                    #print type(de.element)
                     if isinstance(de.element, str):
                         self.ScrollText(de.element, de.delay, double_buffer)
                     elif isinstance(de.element, Image.Image):
@@ -71,12 +70,14 @@ class signScrolling(SampleBase):
         font.LoadFont("../../fonts/10x20.bdf")
         textColor = graphics.Color(255, 0, 0)
         pos = canvas.width
+        
         canvas.Clear()
         len = graphics.DrawText(canvas, font, pos, 20, textColor, msg)
-        for n in range(canvas.width, -(len + canvas.width), -1):
+        
+        for n in range(canvas.width, -len, -1):
             canvas.Clear()
             len = graphics.DrawText(canvas, font, n, 20, textColor, msg)
-
+            
             canvas = self.matrix.SwapOnVSync(canvas)
             if n == 0:
                 time.sleep(float(delay))
