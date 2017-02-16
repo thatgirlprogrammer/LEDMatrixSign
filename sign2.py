@@ -86,7 +86,7 @@ class signScrolling(SampleBase):
                 
         
     def readAnimation(self, filename):
-        print 'readAnimation: ', filename
+        #print 'readAnimation: ', filename
             
         animation = Animation()
         
@@ -94,7 +94,7 @@ class signScrolling(SampleBase):
         im.load()
         try:
             while 1:
-                print 'read frame'
+                #print 'read frame'
                 a = im.copy().convert('RGB')
                 a = Scale(a)
                 animation.frames.append(a)
@@ -104,28 +104,34 @@ class signScrolling(SampleBase):
             pass # we're done
             
         try:
-            print 'read duration'
+            #print 'read duration'
             animation.delay = im.info['duration']
-            print 'read duration from gif'
-            print animation.delay
+            #print 'read duration from gif'
+            #print animation.delay
         except KeyError:
             animation.delay = 100
-            print 'defaulting duration'
-            print 'delay: ', animation.delay
+            #print 'defaulting duration'
+            #print 'delay: ', animation.delay
 
         return animation
     
     def DisplayAnimation(self, anim, canvas):
-        print len(anim.frames)
-        while True:
-            for n in range(len(anim.frames)):
-                print 'display frame: ', n
-                canvas.Clear()
-                canvas.SetImage(anim.frames[n], 0, 0)
-                canvas = self.matrix.SwapOnVSync(canvas)
-                s = 0.1 #float(anim.delay/1000)
-                print 'sleep: ', s
-                time.sleep(s)
+        #print len(anim.frames)
+        #print anim.delay/1000.0
+        numberFrames = len(anim.frames)
+        currentFrame = 0
+        for n in range(canvas.width, -anim.frames[0].size[0], -1):
+            #print 'display frame: ', currentFrame
+            canvas.Clear()
+            canvas.SetImage(anim.frames[currentFrame], n, 0)
+            canvas = self.matrix.SwapOnVSync(canvas)
+            s = anim.delay/1000.0
+            #print 'sleep: ', s
+            time.sleep(s)
+            if currentFrame == (numberFrames - 1):
+                currentFrame = 0
+            else:
+                currentFrame += 1
 
 
     def readFile(self):
