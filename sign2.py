@@ -18,8 +18,10 @@ from rgbmatrix import graphics
 maxHeight = 32
 
 class displayElement:
-    element = None
-    delay = 0
+    element   = None
+    inEffect  = ''
+    Color     = None
+    delay     = 0
 
 class Animation:
     frames = []
@@ -39,51 +41,150 @@ class signScrolling(SampleBase):
             print 'run'
             self.readFile()
             double_buffer = self.matrix.CreateFrameCanvas()
-            xpos = 0
             
             # main loop
-            while True:
-                for de in self.dispElemList:
-                    #print type(de.element)
-                    if isinstance(de.element, str):
-                        self.ScrollText(de.element, de.delay, double_buffer)
-                    elif isinstance(de.element, Image.Image):
-                        self.ScrollImage(de.element, de.delay, double_buffer)
-                    elif isinstance(de.element, Animation):
-                        self.DisplayAnimation(de.element, double_buffer)
+            try:
+                while True:
+                    print 'loop'
+                    for de in self.dispElemList:
+                        print type(de.element)
+                        if isinstance(de.element, str):
+                            print 'string'
+                            if de.inEffect == 'ScrollRL':
+                                self.ScrollTextRL(de, double_buffer)
+                            elif de.inEffect == 'ScrollUp':
+                                self.ScrollTextUp(de, double_buffer)
+                            elif de.inEffect == 'Display':
+                                self.displayText(de, double_buffer)
+                            else:
+                                print 'unknown effect'
+                        elif isinstance(de.element, Image.Image):
+                            print 'image'
+                            if de.inEffect == 'ScrollRL':
+                                self.ScrollImageRL(de, double_buffer)
+                            elif de.inEffect == 'ScrollUp':
+                                self.ScrollImageUp(de, double_buffer)
+                            elif de.inEffect == 'Display':
+                                self.DisplayImage(de, double_buffer)
+                            else:
+                                print 'unknown effect'
+                        elif isinstance(de.element, Animation):
+                            print 'animation'
+                            self.DisplayAnimation(de, double_buffer)
+                        else:
+                            print 'unknown type'
+            except:
+                print "shutting down"
 
-    def ScrollImage(self, img, delay, canvas):
-        for n in range(canvas.width, -img.size[0], -1):
+
+    def ScrollImageRL(self, de, canvas):
+        print 'ScrollImageRL'
+        center = canvas.width/2
+        len = de.element.size[0]
+        print len
+        delayPos = center - (len/2)
+        for n in range(canvas.width, -(de.element.size[0] + 1), -1):
             canvas.Clear()
             #print 'SetImage: ', n, 0
-            canvas.SetImage(img, n, 0)
+            canvas.SetImage(de.element, n, 0)
             canvas = self.matrix.SwapOnVSync(canvas)
-            if n == 0:
-                time.sleep(float(delay))
+            if n == delayPos:
+                time.sleep(float(de.delay))
             else:
                 time.sleep(0.025)
 
-                 
+    def ScrollImageUp(self, de, canvas):
+        print 'ScrollImageUp'
+        center = canvas.width/2
+        len = de.element.size[0]
+        print len
+        pos = center - (len/2)
 
-    def ScrollText(self, msg, delay, canvas):
-        font = graphics.Font()
-        font.LoadFont("../../fonts/10x20.bdf")
-        textColor = graphics.Color(255, 0, 0)
-        pos = canvas.width
+        for n in range(maxHeight, -1, -1):
+            canvas.Clear()
+            #print 'SetImage: ', n, 0
+            canvas.SetImage(de.element, pos, n)
+            canvas = self.matrix.SwapOnVSync(canvas)
+            if n == 0:
+                time.sleep(float(de.delay))
+            else:
+                time.sleep(0.025)
+
+    def DisplayImage(self, de, canvas):
+        print 'DisplayImage'
+        center = canvas.width/2
+        len = de.element.size[0]
+        print len
+        pos = center - (len/2)
         
         canvas.Clear()
-        len = graphics.DrawText(canvas, font, pos, 20, textColor, msg)
+        #print 'SetImage: ', n, 0
+        canvas.SetImage(de.element, pos, 0)
+        canvas = self.matrix.SwapOnVSync(canvas)
+        time.sleep(float(de.delay))
+        
+    def displayText(self, de, canvas):
+        font = graphics.Font()
+        font.LoadFont("../../fonts/10x20.bdf")
+        textColor = de.Color
+        center = canvas.width/2
+        len = graphics.DrawText(canvas, font, 0, 20, textColor, de.element)
+        pos = center - (len/2)
+        canvas.Clear()
+        len = graphics.DrawText(canvas, font, pos, 20, textColor, de.element)         
+        canvas = self.matrix.SwapOnVSync(canvas)
+        time.sleep(float(de.delay))
+
+    def ScrollTextRL(self, de, canvas):
+        #print 'ScrollText'
+        font = graphics.Font()
+        font.LoadFont("../../fonts/10x20.bdf")
+        #print de.Color
+        textColor = de.Color
+        pos = canvas.width
+        
+        center = canvas.width/2
+        len = graphics.DrawText(canvas, font, 0, 20, textColor, de.element)
+        delayPos = center - (len/2)
+        
+        canvas.Clear()
+        len = graphics.DrawText(canvas, font, pos, 20, textColor, de.element)
         
         for n in range(canvas.width, -len, -1):
             canvas.Clear()
-            len = graphics.DrawText(canvas, font, n, 20, textColor, msg)
+            len = graphics.DrawText(canvas, font, n, 20, textColor, de.element)
             
             canvas = self.matrix.SwapOnVSync(canvas)
-            if n == 0:
-                time.sleep(float(delay))
+            if n == delayPos:
+                time.sleep(float(de.delay))
             else:
                 time.sleep(0.025)
                 
+    def ScrollTextUp(self, de, canvas):
+        print 'ScrollText'
+        font = graphics.Font()
+        font.LoadFont("../../fonts/10x20.bdf")
+        #print de.Color
+        textColor = de.Color
+        
+        center = canvas.width/2
+        len = graphics.DrawText(canvas, font, 0, 20, textColor, de.element)
+        pos = center - (len/2)
+        
+        canvas.Clear()
+        len = graphics.DrawText(canvas, font, pos, maxHeight, textColor, de.element)
+        
+        #Make the loop go to -1 so that we scroll all the way off the screen.
+        for n in range(maxHeight, -1, -1):
+            canvas.Clear()
+            len = graphics.DrawText(canvas, font, pos, n, textColor, de.element)
+            
+            canvas = self.matrix.SwapOnVSync(canvas)
+            #pause at 20 becuase it is centered on the display with the font we are using
+            if n == 20:
+                time.sleep(float(de.delay))
+            else:
+                time.sleep(0.025)
         
     def readAnimation(self, filename):
         #print 'readAnimation: ', filename
@@ -135,31 +236,42 @@ class signScrolling(SampleBase):
 
 
     def readFile(self):
+        print 'file read'
         f = open(self.file, "r")
         for line in f.readlines():
-            v = line.split(",")
-            print v
-            value = v[1].rstrip()
-            de = displayElement()
-            de.delay = v[2]
-            #print value
-            if v[0] == "file":
-                img  = Image.open(value).convert('RGB')
-                img.load()
-                img  = Scale(img)
-                de.element = img
-                self.dispElemList.append(de)
-            elif v[0] == "text":
-                de.element = value
-                self.dispElemList.append(de)
-            
-            elif v[0] == "anim":
-                a =self. readAnimation(value)
-                de.element = a
-                self.dispElemList.append(de)
-    
+            try:
+                if line[0] != '#':
+                    v = line.split(",")
+                    print v
+                    value = v[1].rstrip()
+                    de = displayElement()
+                    de.inEffect = v[2]
+                    r = int(v[3])
+                    g = int(v[4])
+                    b = int(v[5])
+                    print 'converting to color'
+                    de.Color = graphics.Color(r, g, b)
+                    #print de.Color
+                    de.delay = v[6]
+                    #print value
+                    if v[0] == "file":
+                        img  = Image.open(value).convert('RGB')
+                        img.load()
+                        img  = Scale(img)
+                        de.element = img
+                        self.dispElemList.append(de)
+                    elif v[0] == "text":
+                        de.element = value
+                        self.dispElemList.append(de)
+                    elif v[0] == "anim":
+                        a =self. readAnimation(value)
+                        de.element = a
+                        self.dispElemList.append(de)
+            except:
+                    print 'error on line ', line
+
         f.close()
-            
+          
         
 
 def Scale(img):

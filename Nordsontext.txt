@@ -1,0 +1,11 @@
+file,nordson_dk.png,				ScrollRL,0,250,0,0
+text,Northview Robotics,			ScrollRL,0,0,250,0
+text,www.technotitans.org,			ScrollRL,0,255,255,0
+file,FIRST_logo.png,				ScrollRL,0,255,0,0
+text,Encouraging STEM,				ScrollRL,0,0,240,0
+text,Built from scratch in 6 weeks,	ScrollRL,200,0,200,0
+text,Start Build 1/7/2017,			ScrollRL,100,200,0,0
+text,Stop Build 2/21/2017,			ScrollRL,100,255,0,0
+text,Competition starts  March 3rd,	ScrollRL,255,0,0,0
+text,Nordson: Sponsors since 2007,	ScrollRL,0,0,255,0
+text,Mentors:  Pete E. and Howard E.,ScrollRL,0,0,255,0
