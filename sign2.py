@@ -45,11 +45,11 @@ class signScrolling(SampleBase):
             # main loop
             try:
                 while True:
-                    print 'loop'
+                    #print 'loop'
                     for de in self.dispElemList:
-                        print type(de.element)
+                        #print type(de.element)
                         if isinstance(de.element, str):
-                            print 'string'
+                            #print 'string'
                             if de.inEffect == 'ScrollRL':
                                 self.ScrollTextRL(de, double_buffer)
                             elif de.inEffect == 'ScrollUp':
@@ -59,7 +59,7 @@ class signScrolling(SampleBase):
                             else:
                                 print 'unknown effect'
                         elif isinstance(de.element, Image.Image):
-                            print 'image'
+                            #print 'image'
                             if de.inEffect == 'ScrollRL':
                                 self.ScrollImageRL(de, double_buffer)
                             elif de.inEffect == 'ScrollUp':
@@ -69,7 +69,7 @@ class signScrolling(SampleBase):
                             else:
                                 print 'unknown effect'
                         elif isinstance(de.element, Animation):
-                            print 'animation'
+                            #print 'animation'
                             self.DisplayAnimation(de, double_buffer)
                         else:
                             print 'unknown type'
@@ -78,10 +78,10 @@ class signScrolling(SampleBase):
 
 
     def ScrollImageRL(self, de, canvas):
-        print 'ScrollImageRL'
+        #print 'ScrollImageRL'
         center = canvas.width/2
         len = de.element.size[0]
-        print len
+        #print len
         delayPos = center - (len/2)
         for n in range(canvas.width, -(de.element.size[0] + 1), -1):
             canvas.Clear()
@@ -94,10 +94,10 @@ class signScrolling(SampleBase):
                 time.sleep(0.025)
 
     def ScrollImageUp(self, de, canvas):
-        print 'ScrollImageUp'
+        #print 'ScrollImageUp'
         center = canvas.width/2
         len = de.element.size[0]
-        print len
+        #print len
         pos = center - (len/2)
 
         for n in range(maxHeight, -1, -1):
@@ -111,10 +111,10 @@ class signScrolling(SampleBase):
                 time.sleep(0.025)
 
     def DisplayImage(self, de, canvas):
-        print 'DisplayImage'
+        #print 'DisplayImage'
         center = canvas.width/2
         len = de.element.size[0]
-        print len
+        #print len
         pos = center - (len/2)
         
         canvas.Clear()
@@ -243,27 +243,27 @@ class signScrolling(SampleBase):
                 if line[0] != '#':
                     v = line.split(",")
                     print v
-                    value = v[1].rstrip()
+                    value = v[1].strip()
                     de = displayElement()
-                    de.inEffect = v[2]
-                    r = int(v[3])
-                    g = int(v[4])
-                    b = int(v[5])
+                    de.inEffect = v[2].strip()
+                    r = int(v[3].strip())
+                    g = int(v[4].strip())
+                    b = int(v[5].strip())
                     print 'converting to color'
                     de.Color = graphics.Color(r, g, b)
                     #print de.Color
-                    de.delay = v[6]
+                    de.delay = v[6].strip()
                     #print value
-                    if v[0] == "file":
+                    if v[0].strip() == "file":
                         img  = Image.open(value).convert('RGB')
                         img.load()
                         img  = Scale(img)
                         de.element = img
                         self.dispElemList.append(de)
-                    elif v[0] == "text":
+                    elif v[0].strip() == "text":
                         de.element = value
                         self.dispElemList.append(de)
-                    elif v[0] == "anim":
+                    elif v[0].strip() == "anim":
                         a =self. readAnimation(value)
                         de.element = a
                         self.dispElemList.append(de)
