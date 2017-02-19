@@ -180,7 +180,7 @@ class signScrolling(SampleBase):
         len = graphics.DrawText(canvas, font, pos, maxHeight, textColor, de.element)
         
         #Make the loop go to -1 so that we scroll all the way off the screen.
-        for n in range(maxHeight, -1, -1):
+        for n in range(maxHeight, -5, -1):
             canvas.Clear()
             len = graphics.DrawText(canvas, font, pos, n, textColor, de.element)
             
@@ -253,7 +253,7 @@ class signScrolling(SampleBase):
                     de.inEffect = v[2].strip()
                     r = int(v[3].strip())
                     g = int(v[4].strip())
-                    b = int(v[5].strip())<<<<<<< HEAD
+                    b = int(v[5].strip())
                     #print 'converting to color'
                     de.Color = graphics.Color(r, g, b)
                     #print de.Color

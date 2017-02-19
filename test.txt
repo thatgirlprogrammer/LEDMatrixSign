@@ -1,0 +1,3 @@
+#file,TechnoTitans_dk.png,Display,0,0,0,5
+text,g,ScrollUp,0,255,0,5
+#text,Robotics,Display,0,255,0,5
