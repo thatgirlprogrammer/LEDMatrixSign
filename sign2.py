@@ -253,7 +253,7 @@ class signScrolling(SampleBase):
                     de.inEffect = v[2].strip()
                     r = int(v[3].strip())
                     g = int(v[4].strip())
-                    b = int(v[5].strip())
+                    b = int(v[5].strip())<<<<<<< HEAD
                     #print 'converting to color'
                     de.Color = graphics.Color(r, g, b)
                     #print de.Color
