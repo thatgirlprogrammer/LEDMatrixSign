@@ -1,10 +1,9 @@
-file,TechnoTitans_dk.png,0
-file,1683_dk.png,0
-file,nordson_dk.png,0
-#file,GAW_dk.png,0
-#file,GM2.png,0
-#file,GPC_dk.png,0
-#file,ofs_dk.png,0
-text,Next Match: 30,5
-file,FIRST_logo.png,0
-anim,gold-brass-gear-cogs-animated-7.gif,0
+file,TechnoTitans_dk.png,               ScrollRL,0,250,0,0
+file,1683_dk.png,                       ScrollRL,0,250,0,0
+file,nordson_dk.png,                    ScrollRL,0,250,0,0
+file,GAW_dk.jpg,                        ScrollRL,0,250,0,0
+file,GM2.png,                           ScrollRL,0,250,0,0
+file,GPC_dk.png,                        ScrollRL,0,250,0,0
+file,ofs_dk.png,                        ScrollRL,0,250,0,0
+text,Next Match: 30,                    ScrollRL,0,250,0,0
+file,FIRST_logo.png,                    ScrollRL,0,250,0,0

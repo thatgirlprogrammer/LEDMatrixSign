@@ -10,12 +10,15 @@
 # PIL ImageDraw module (draw shapes to images) explained here:
 # http://effbot.org/imagingbook/imagedraw.htm
 
+import os
 import time
+import logging
 from samplebase import SampleBase
 from PIL import Image
 from rgbmatrix import graphics
 
 maxHeight = 32
+workingDir= "/home/pi/rpi-rgb-led-matrix/python/LEDMatrixSign"
 
 class displayElement:
     element   = None
@@ -38,18 +41,20 @@ class signScrolling(SampleBase):
     def run(self):
         if not 'file' in self.__dict__:
             self.file = self.args.file
-            print 'run'
+            logging.debug('run')
+            
+            os.chdir(workingDir)
             self.readFile()
             double_buffer = self.matrix.CreateFrameCanvas()
             
             # main loop
             try:
                 while True:
-                    print 'loop'
+                    #print 'loop'
                     for de in self.dispElemList:
-                        print type(de.element)
+                        #print type(de.element)
                         if isinstance(de.element, str):
-                            print 'string'
+                            #print 'string'
                             if de.inEffect == 'ScrollRL':
                                 self.ScrollTextRL(de, double_buffer)
                             elif de.inEffect == 'ScrollUp':
@@ -59,7 +64,7 @@ class signScrolling(SampleBase):
                             else:
                                 print 'unknown effect'
                         elif isinstance(de.element, Image.Image):
-                            print 'image'
+                            #print 'image'
                             if de.inEffect == 'ScrollRL':
                                 self.ScrollImageRL(de, double_buffer)
                             elif de.inEffect == 'ScrollUp':
@@ -69,7 +74,7 @@ class signScrolling(SampleBase):
                             else:
                                 print 'unknown effect'
                         elif isinstance(de.element, Animation):
-                            print 'animation'
+                            #print 'animation'
                             self.DisplayAnimation(de, double_buffer)
                         else:
                             print 'unknown type'
@@ -78,10 +83,10 @@ class signScrolling(SampleBase):
 
 
     def ScrollImageRL(self, de, canvas):
-        print 'ScrollImageRL'
+        #print 'ScrollImageRL'
         center = canvas.width/2
         len = de.element.size[0]
-        print len
+        #print len
         delayPos = center - (len/2)
         for n in range(canvas.width, -(de.element.size[0] + 1), -1):
             canvas.Clear()
@@ -94,10 +99,10 @@ class signScrolling(SampleBase):
                 time.sleep(0.025)
 
     def ScrollImageUp(self, de, canvas):
-        print 'ScrollImageUp'
+        #print 'ScrollImageUp'
         center = canvas.width/2
         len = de.element.size[0]
-        print len
+        #print len
         pos = center - (len/2)
 
         for n in range(maxHeight, -1, -1):
@@ -111,10 +116,10 @@ class signScrolling(SampleBase):
                 time.sleep(0.025)
 
     def DisplayImage(self, de, canvas):
-        print 'DisplayImage'
+        #print 'DisplayImage'
         center = canvas.width/2
         len = de.element.size[0]
-        print len
+        #print len
         pos = center - (len/2)
         
         canvas.Clear()
@@ -128,7 +133,7 @@ class signScrolling(SampleBase):
         font.LoadFont("../../fonts/10x20.bdf")
         textColor = de.Color
         center = canvas.width/2
-        len = graphics.DrawText(canvas, font, 0, 20, textColor, de.element)
+        len = graphics.DrawText(canvas, font, 0, 0, textColor, de.element)
         pos = center - (len/2)
         canvas.Clear()
         len = graphics.DrawText(canvas, font, pos, 20, textColor, de.element)         
@@ -144,7 +149,7 @@ class signScrolling(SampleBase):
         pos = canvas.width
         
         center = canvas.width/2
-        len = graphics.DrawText(canvas, font, 0, 20, textColor, de.element)
+        len = graphics.DrawText(canvas, font, 0, 0, textColor, de.element)
         delayPos = center - (len/2)
         
         canvas.Clear()
@@ -161,14 +166,14 @@ class signScrolling(SampleBase):
                 time.sleep(0.025)
                 
     def ScrollTextUp(self, de, canvas):
-        print 'ScrollText'
+        #print 'ScrollText'
         font = graphics.Font()
         font.LoadFont("../../fonts/10x20.bdf")
         #print de.Color
         textColor = de.Color
         
         center = canvas.width/2
-        len = graphics.DrawText(canvas, font, 0, 20, textColor, de.element)
+        len = graphics.DrawText(canvas, font, 0, 0, textColor, de.element)
         pos = center - (len/2)
         
         canvas.Clear()
@@ -236,34 +241,34 @@ class signScrolling(SampleBase):
 
 
     def readFile(self):
-        print 'file read'
+        print 'file read: ', self.file
         f = open(self.file, "r")
         for line in f.readlines():
             try:
                 if line[0] != '#':
                     v = line.split(",")
-                    print v
-                    value = v[1].rstrip()
+                    #print v
+                    value = v[1].strip()
                     de = displayElement()
-                    de.inEffect = v[2]
-                    r = int(v[3])
-                    g = int(v[4])
-                    b = int(v[5])
-                    print 'converting to color'
+                    de.inEffect = v[2].strip()
+                    r = int(v[3].strip())
+                    g = int(v[4].strip())
+                    b = int(v[5].strip())
+                    #print 'converting to color'
                     de.Color = graphics.Color(r, g, b)
                     #print de.Color
-                    de.delay = v[6]
+                    de.delay = v[6].strip()
                     #print value
-                    if v[0] == "file":
+                    if v[0].strip() == "file":
                         img  = Image.open(value).convert('RGB')
                         img.load()
                         img  = Scale(img)
                         de.element = img
                         self.dispElemList.append(de)
-                    elif v[0] == "text":
+                    elif v[0].strip() == "text":
                         de.element = value
                         self.dispElemList.append(de)
-                    elif v[0] == "anim":
+                    elif v[0].strip() == "anim":
                         a =self. readAnimation(value)
                         de.element = a
                         self.dispElemList.append(de)
@@ -284,6 +289,8 @@ def Scale(img):
 #MAIN
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='/var/log/LEDMatrixSign',level=logging.DEBUG)
+    logging.info('LEDMatrixSign v1.0 starting')
     sign_scroller = signScrolling()
     if (not sign_scroller.process()):
         sign_scroller.print_help()
