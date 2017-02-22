@@ -10,6 +10,7 @@
 # PIL ImageDraw module (draw shapes to images) explained here:
 # http://effbot.org/imagingbook/imagedraw.htm
 
+import signal
 import os
 import time
 import logging
@@ -105,7 +106,7 @@ class signScrolling(SampleBase):
         #print len
         pos = center - (len/2)
 
-        for n in range(maxHeight, -1, -1):
+        for n in range(maxHeight, -maxHeight, -1):
             canvas.Clear()
             #print 'SetImage: ', n, 0
             canvas.SetImage(de.element, pos, n)
@@ -285,12 +286,23 @@ def Scale(img):
         img = img.resize((width,maxHeight), Image.ANTIALIAS)
         #print img.size
         return img
-        
+
+def handler(signum, frame):
+    print 'Signal handler called with signal {0}'.format(signum)
+    syslog.syslog('Signal handler called with signal {0}'.format(signum))
+    sys.exit(0)
+
+
 #MAIN
 
 if __name__ == "__main__":
     logging.basicConfig(filename='/var/log/LEDMatrixSign',level=logging.DEBUG)
     logging.info('LEDMatrixSign v1.0 starting')
+
+    # Set the signal handler
+    signal.signal(signal.SIGINT, handler)
+    signal.signal(signal.SIGUSR1, handler)
+
     sign_scroller = signScrolling()
     if (not sign_scroller.process()):
         sign_scroller.print_help()
