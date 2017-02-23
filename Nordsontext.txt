@@ -1,17 +1,11 @@
-file,nordson_dk.png,				ScrollUp,0,0,0,10
+file,nordson_dk.png,				Display,0,250,0,5
 text,Northview Robotics,			ScrollRL,0,0,250,0
-text,www.technotitans.org,		ScrollRL,0,255,255,0
+text,www.technotitans.org,			ScrollRL,0,255,255,0
 file,FIRST_logo.png,				ScrollUp,0,255,0,5
-text,Encouraging STEM,			ScrollUp,240,0,240,5
-text,Built from scratch,			ScrollRL,100,20,200,0
-text,in 6 weeks,					Display,200,0,200,4
-text,Start Build:,					ScrollUp,50,47,221,6
-text,1/7/2017,						Display,100,255,0,3
-text,Stop Build:,					ScrollUp,50,47,221,6
-text,2/21/2017,						Display,100,255,0,3
-text,Competition starts:,		ScrollRL,59,183,72,0
-text,March 3rd,						ScrollUp,255,0,0,3
-text,Nordson:,						Display,0,0,255,5
-text,Sponsor since 2007,			ScrollRL,255,50,100,0
-text,Mentors:,						Display,0,100,255,5
-text,Pete E. and Howard E.,		ScrollRL,0,0,255,0
+text,Encouraging STEM,				ScrollRL,0,0,240,0
+text,Built from scratch in 6 weeks,	ScrollRL,200,0,200,0
+text,Start Build 1/7/2017,			ScrollRL,100,200,0,0
+text,Stop Build 2/21/2017,			ScrollRL,100,255,0,0
+text,Competition starts  March 3rd,	ScrollRL,255,0,0,0
+text,Nordson: Sponsors since 2006,	ScrollRL,0,0,255,0
+text,Mentors: Pete E. and Howard E.,ScrollRL,0,0,255,0
