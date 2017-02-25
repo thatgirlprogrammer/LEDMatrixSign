@@ -25,7 +25,7 @@ class displayElement:
     element   = None
     inEffect  = ''
     Color     = None
-    delay     = 0
+    delay     = 0.0
 
 class Animation:
     frames = []
@@ -34,7 +34,7 @@ class Animation:
 
 class signScrolling(SampleBase):
     dispElemList = []
-        
+
     def __init__(self, *args, **kwargs):
         super(signScrolling, self).__init__(*args, **kwargs)
         self.parser.add_argument("-f", "--file", help="The file to read", default="signContent.txt")
@@ -43,11 +43,11 @@ class signScrolling(SampleBase):
         if not 'file' in self.__dict__:
             self.file = self.args.file
             logging.debug('run')
-            
+
             os.chdir(workingDir)
             self.readFile()
             double_buffer = self.matrix.CreateFrameCanvas()
-            
+
             # main loop
             try:
                 while True:
@@ -76,7 +76,14 @@ class signScrolling(SampleBase):
                                 print 'unknown effect'
                         elif isinstance(de.element, Animation):
                             #print 'animation'
-                            self.DisplayAnimation(de, double_buffer)
+                            if de.inEffect == 'ScrollRL':
+                                self.ScrollAnimationRL(de, double_buffer)
+                            elif de.inEffect == 'ScrollUp':
+                                self.ScrollAnimationUp(de, double_buffer)
+                            elif de.inEffect == 'Display':
+                                self.DisplayAnimation(de, double_buffer)
+                            else:
+                                print 'unknown effect'
                         else:
                             print 'unknown type'
             except:
@@ -100,7 +107,7 @@ class signScrolling(SampleBase):
                 time.sleep(0.025)
 
     def ScrollImageUp(self, de, canvas):
-        #print 'ScrollImageUp'
+        print 'ScrollImageUp'
         center = canvas.width/2
         len = de.element.size[0]
         #print len
@@ -108,7 +115,7 @@ class signScrolling(SampleBase):
 
         for n in range(maxHeight, -maxHeight, -1):
             canvas.Clear()
-            #print 'SetImage: ', n, 0
+            #print 'SetImage: ', pos, n
             canvas.SetImage(de.element, pos, n)
             canvas = self.matrix.SwapOnVSync(canvas)
             if n == 0:
@@ -122,13 +129,13 @@ class signScrolling(SampleBase):
         len = de.element.size[0]
         #print len
         pos = center - (len/2)
-        
+
         canvas.Clear()
         #print 'SetImage: ', n, 0
         canvas.SetImage(de.element, pos, 0)
         canvas = self.matrix.SwapOnVSync(canvas)
         time.sleep(float(de.delay))
-        
+
     def displayText(self, de, canvas):
         font = graphics.Font()
         font.LoadFont("../../fonts/10x20.bdf")
@@ -137,7 +144,7 @@ class signScrolling(SampleBase):
         len = graphics.DrawText(canvas, font, 0, 0, textColor, de.element)
         pos = center - (len/2)
         canvas.Clear()
-        len = graphics.DrawText(canvas, font, pos, 20, textColor, de.element)         
+        len = graphics.DrawText(canvas, font, pos, 20, textColor, de.element)
         canvas = self.matrix.SwapOnVSync(canvas)
         time.sleep(float(de.delay))
 
@@ -148,55 +155,93 @@ class signScrolling(SampleBase):
         #print de.Color
         textColor = de.Color
         pos = canvas.width
-        
+
         center = canvas.width/2
         len = graphics.DrawText(canvas, font, 0, 0, textColor, de.element)
         delayPos = center - (len/2)
-        
+
         canvas.Clear()
         len = graphics.DrawText(canvas, font, pos, 20, textColor, de.element)
-        
+
         for n in range(canvas.width, -len, -1):
             canvas.Clear()
             len = graphics.DrawText(canvas, font, n, 20, textColor, de.element)
-            
+
             canvas = self.matrix.SwapOnVSync(canvas)
             if n == delayPos:
                 time.sleep(float(de.delay))
             else:
                 time.sleep(0.025)
-                
+
     def ScrollTextUp(self, de, canvas):
         #print 'ScrollText'
         font = graphics.Font()
         font.LoadFont("../../fonts/10x20.bdf")
         #print de.Color
         textColor = de.Color
-        
+
         center = canvas.width/2
         len = graphics.DrawText(canvas, font, 0, 0, textColor, de.element)
         pos = center - (len/2)
-        
+
         canvas.Clear()
         len = graphics.DrawText(canvas, font, pos, maxHeight, textColor, de.element)
-        
+
         #Make the loop go to -1 so that we scroll all the way off the screen.
         for n in range(maxHeight, -5, -1):
             canvas.Clear()
             len = graphics.DrawText(canvas, font, pos, n, textColor, de.element)
-            
+
             canvas = self.matrix.SwapOnVSync(canvas)
             #pause at 20 becuase it is centered on the display with the font we are using
             if n == 20:
                 time.sleep(float(de.delay))
             else:
                 time.sleep(0.025)
-        
+
+    def ScrollAnimationRL(self, de, canvas):
+        #print len(anim.frames)
+        #print anim.delay/1000.0
+        numberFrames = len(de.element.frames)
+        currentFrame = 0
+        for n in range(canvas.width, -de.element.frames[0].size[0], -2):
+            #print 'display frame: ', currentFrame
+            canvas.Clear()
+            canvas.SetImage(de.element.frames[currentFrame], n, 0)
+            canvas = self.matrix.SwapOnVSync(canvas)
+            time.sleep(de.element.delay/1000.0)
+            if currentFrame == (numberFrames - 1):
+                currentFrame = 0
+            else:
+                currentFrame += 1
+
+    def ScrollAnimationUp(self, de, canvas):
+        #print 'ScrollAnimationUp'
+        center = canvas.width/2
+        width = de.element.frames[0].size[0]
+        #print 'frame width: ', width
+        numberFrames = len(de.element.frames)
+        #print 'numberFrames: ', numberFrames
+        pos = center - (width/2)
+
+        currentFrame = 0
+        for n in range(maxHeight, -maxHeight, -1):
+            canvas.Clear()
+            #print 'SetImage: ', pos, n
+            canvas.SetImage(de.element.frames[currentFrame], pos, n)
+            #print 'image set successfully'
+            canvas = self.matrix.SwapOnVSync(canvas)
+            time.sleep(de.element.delay/1000.0)
+            if currentFrame == (numberFrames - 1):
+                currentFrame = 0
+            else:
+                currentFrame += 1
+
     def readAnimation(self, filename):
-        #print 'readAnimation: ', filename
-            
+        print 'readAnimation: ', filename
+
         animation = Animation()
-        
+
         im = Image.open(filename)
         im.load()
         try:
@@ -206,10 +251,10 @@ class signScrolling(SampleBase):
                 a = Scale(a)
                 animation.frames.append(a)
                 im.seek(len(animation.frames)) # skip to next frame
-        
+
         except EOFError:
             pass # we're done
-            
+
         try:
             #print 'read duration'
             animation.delay = im.info['duration']
@@ -221,24 +266,6 @@ class signScrolling(SampleBase):
             #print 'delay: ', animation.delay
 
         return animation
-    
-    def DisplayAnimation(self, anim, canvas):
-        #print len(anim.frames)
-        #print anim.delay/1000.0
-        numberFrames = len(anim.frames)
-        currentFrame = 0
-        for n in range(canvas.width, -anim.frames[0].size[0], -1):
-            #print 'display frame: ', currentFrame
-            canvas.Clear()
-            canvas.SetImage(anim.frames[currentFrame], n, 0)
-            canvas = self.matrix.SwapOnVSync(canvas)
-            s = anim.delay/1000.0
-            #print 'sleep: ', s
-            time.sleep(s)
-            if currentFrame == (numberFrames - 1):
-                currentFrame = 0
-            else:
-                currentFrame += 1
 
 
     def readFile(self):
@@ -277,8 +304,8 @@ class signScrolling(SampleBase):
                     print 'error on line ', line
 
         f.close()
-          
-        
+
+
 
 def Scale(img):
         hpercent = (maxHeight/float(img.size[1]))
