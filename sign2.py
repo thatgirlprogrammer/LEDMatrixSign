@@ -81,7 +81,9 @@ class signScrolling(SampleBase):
                             elif de.inEffect == 'ScrollUp':
                                 self.ScrollAnimationUp(de, double_buffer)
                             elif de.inEffect == 'Display':
-                                self.DisplayAnimation(de, double_buffer)
+                                #self.DisplayAnimation(de, double_buffer)
+                                # this is not implemented yet
+                                pass
                             else:
                                 print 'unknown effect'
                         else:
