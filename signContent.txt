@@ -1,6 +1,6 @@
 file,TechnoTitans_dk.png,		ScrollRL,0,0,0,5
 text,Northview Robotics,		ScrollRL,0,0,250,0
-text,www.technotitans.org,		ScrollRL,0,255,255,0
+#text,www.technotitans.org,		ScrollRL,0,255,255,0
 file,1683_dk.png,				ScrollRL,0,0,0,0
 text,Building robots since 2005!,ScrollRL,0,255,255,0
 file,nordson_dk.png,			ScrollUp,0,0,0,5
@@ -10,9 +10,9 @@ file,GM2.png,					Display,0,0,0,5
 file,GPC_dk.png,				ScrollRL,0,0,0,0
 file,ofs_dk.png,				Display,0,0,0,5
 file,solidworks_dk.png,			ScrollRL,0,0,0,0
-text,Mentors: Pete E. and Howard E., ScrollRL,0,0,255,0
-text,Next Match: 30,			ScrollUp,255,0,0,5
+text,Mentors: Pete Estelle and Howard Evans, ScrollRL,0,0,255,0
+#text,Next Match: 30,			ScrollUp,255,0,0,5
 file,FIRST_logo.png,			ScrollRL,0,0,0,0
 text,Encouraging STEM,			ScrollRL,0,0,240,0
 file,blimp2.png,				ScrollRL,0,0,0,0
-#anim,gold-brass-gear-cogs-animated-7.gif,ScrollRL,0,0,0,0
+anim,Gear2.gif,                 ScrollRL,0,0,0,0
