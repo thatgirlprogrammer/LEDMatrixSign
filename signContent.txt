@@ -4,7 +4,7 @@ text,Northview Robotics,		ScrollRL,0,0,250,0
 file,1683_dk.png,				ScrollRL,0,0,0,0
 text,Building robots since 2005!,ScrollRL,0,255,255,0
 file,nordson_dk.png,			ScrollUp,0,0,0,5
-text,Sponsors since 2006,		ScrollRL,0,0,255,0
+text,Sponsor since 2006,		ScrollRL,0,0,255,0
 file,GAW_dk.jpg,				ScrollUp,0,0,0,5
 file,GM2.png,					Display,0,0,0,5
 file,GPC_dk.png,				ScrollRL,0,0,0,0
